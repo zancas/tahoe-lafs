@@ -395,6 +395,7 @@ def get_disk_stats(whichdir, reserved_space=0):
         total = s.f_frsize * s.f_blocks
         free_for_root = s.f_frsize * s.f_bfree
         free_for_nonroot = s.f_frsize * s.f_bavail
+        print "STATVFS", s
 
     # valid for all platforms:
     used = total - free_for_root

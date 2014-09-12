@@ -518,7 +518,7 @@ class FileUtil(unittest.TestCase):
             raise unittest.SkipTest("This test will spuriously fail there is no disk space left.")
 
         disk = fileutil.get_disk_stats('.', 2**13)
-        print "GET_DISK_STATS", disk
+        print "GET_DISK_STATS",  disk
         self.failUnless(disk['total'] > 0, disk['total'])
         self.failUnless(disk['used'] > 0, disk['used'])
         self.failUnless(disk['free_for_root'] > 0, disk['free_for_root'])

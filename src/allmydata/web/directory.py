@@ -26,7 +26,7 @@ from allmydata.web.common import text_plain, WebError, \
      boolean_of_arg, get_arg, get_root, parse_replace_arg, \
      should_create_intermediate_directories, \
      getxmlfile, RenderMixin, humanize_failure, convert_children_json, \
-     get_format, get_mutable_type
+     get_format, get_mutable_type, get_filenode_metadata
 from allmydata.web.filenode import ReplaceMeMixin, \
      FileNodeHandler, PlaceHolderNodeHandler
 from allmydata.web.check_results import CheckResultsRenderer, \
@@ -868,21 +868,6 @@ class DirectoryAsHTML(rend.Page):
     def render_results(self, ctx, data):
         req = IRequest(ctx)
         return get_arg(req, "results", "")
-
-def get_filenode_metadata(filenode):
-    metadata = {'size': filenode.get_size(),
-                'mutable': filenode.is_mutable()}
-    if metadata['mutable']:
-        mutable_type = filenode.get_version()
-        assert mutable_type in (SDMF_VERSION, MDMF_VERSION)
-        if mutable_type == MDMF_VERSION:
-            file_format = "MDMF"
-        else:
-            file_format = "SDMF"
-    else:
-        file_format = "CHK"
-    metadata['format'] = file_format
-    return metadata
 
 def DirectoryJSONMetadata(ctx, dirnode):
     d = dirnode.list()

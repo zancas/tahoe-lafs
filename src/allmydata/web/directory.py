@@ -869,6 +869,20 @@ class DirectoryAsHTML(rend.Page):
         req = IRequest(ctx)
         return get_arg(req, "results", "")
 
+def get_filenode_metadata(filenode):
+    metadata = {'size': filenode.get_size(),
+                'mutable': filenode.is_mutable()}
+    if metadata['mutable']:
+        mutable_type = filenode.get_version()
+        assert mutable_type in (SDMF_VERSION, MDMF_VERSION)
+        if mutable_type == MDMF_VERSION:
+            file_format = "MDMF"
+        else:
+            file_format = "SDMF"
+    else:
+        file_format = "CHK"
+    metadata['format'] = file_format
+    return metadata
 
 def DirectoryJSONMetadata(ctx, dirnode):
     d = dirnode.list()
@@ -879,20 +893,7 @@ def DirectoryJSONMetadata(ctx, dirnode):
             rw_uri = childnode.get_write_uri()
             ro_uri = childnode.get_readonly_uri()
             if IFileNode.providedBy(childnode):
-                kiddata = ("filenode", {'size': childnode.get_size(),
-                                        'mutable': childnode.is_mutable(),
-                                        })
-                if childnode.is_mutable():
-                    mutable_type = childnode.get_version()
-                    assert mutable_type in (SDMF_VERSION, MDMF_VERSION)
-                    if mutable_type == MDMF_VERSION:
-                        file_format = "MDMF"
-                    else:
-                        file_format = "SDMF"
-                else:
-                    file_format = "CHK"
-                kiddata[1]['format'] = file_format
-
+                kiddata = ("filenode", get_filenode_metadata(childnode))
             elif IDirectoryNode.providedBy(childnode):
                 kiddata = ("dirnode", {'mutable': childnode.is_mutable()})
             else:
